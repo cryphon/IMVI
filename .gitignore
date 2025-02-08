@@ -1,0 +1,33 @@
+# Build directories
+build/
+dist/
+installer/
+
+# Python compilation files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Distribution/packaging
+*.egg-info/
+*.egg
+*.manifest
+*.spec
+
+# Virtual environment
+venv/
+env/
+ENV/
+
+# IDE settings (in case you use PyCharm, VS Code, etc)
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Operating System
+.DS_Store
+Thumbs.db
+
+# Inno Setup
+Output/
