@@ -2,11 +2,12 @@ import os
 import sys
 
 import cv2
-from list_widget import ListWidget
 from PyQt5.QtCore import QMimeData, QRect, Qt
 from PyQt5.QtGui import QColor, QFontMetrics, QPainter, QPalette
-from PyQt5.QtWidgets import (QFileDialog, QHBoxLayout, QLabel, QPushButton,
-                             QSlider, QVBoxLayout, QWidget)
+from PyQt5.QtWidgets import (QApplication, QFileDialog, QHBoxLayout, QLabel,
+                             QPushButton, QSlider, QVBoxLayout, QWidget)
+
+from list_widget import ListWidget
 
 
 class VideoCompiler(QWidget):
