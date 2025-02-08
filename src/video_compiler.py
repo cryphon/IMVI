@@ -5,8 +5,10 @@ import cv2
 from PyQt5.QtCore import QMimeData, QRect, Qt
 from PyQt5.QtGui import QColor, QFontMetrics, QPainter, QPalette
 from PyQt5.QtWidgets import (QApplication, QFileDialog, QHBoxLayout, QLabel,
-                             QPushButton, QSlider, QVBoxLayout, QWidget)
+                             QListWidgetItem, QPushButton, QSlider,
+                             QVBoxLayout, QWidget)
 
+from image_list_item import ImageListItem
 from list_widget import ListWidget
 
 
@@ -14,29 +16,26 @@ class VideoCompiler(QWidget):
 
     def __init__(self, parent=None):
         super(VideoCompiler, self).__init__(parent)
-        self.image_paths = []  # List to store image file paths
+        self.image_paths = []
         self.setAcceptDrops(True)
         self._create_ui()
 
     def _create_ui(self):
+        """Create UI for the application"""
         main_layout = QVBoxLayout(self)
 
-        # List widget to show added images
+        # List widget
         self.list_widget = ListWidget(self)
         main_layout.addWidget(self.list_widget)
 
-        # Button row for adding, removing, and reordering images
+        # Buttons
         btn_layout = QHBoxLayout()
-        self.remove_btn = QPushButton("Remove Selected")
         self.up_btn = QPushButton("Move Up")
         self.down_btn = QPushButton("Move Down")
-        btn_layout.addWidget(self.remove_btn)
         btn_layout.addWidget(self.up_btn)
         btn_layout.addWidget(self.down_btn)
         main_layout.addLayout(btn_layout)
 
-        # Connect button signals
-        self.remove_btn.clicked.connect(self.remove_selected)
         self.up_btn.clicked.connect(self.move_up)
         self.down_btn.clicked.connect(self.move_down)
 
@@ -64,7 +63,7 @@ class VideoCompiler(QWidget):
         main_layout.addWidget(self.compile_btn)
         self.compile_btn.clicked.connect(self.compile_video)
 
-        # Status label to display messages
+        # Status label
         self.status_label = QLabel("")
         self.status_label.setAlignment(Qt.AlignCenter)
         main_layout.addWidget(self.status_label)
@@ -79,24 +78,14 @@ class VideoCompiler(QWidget):
             self.update_list_widget()
 
     def update_list_widget(self):
-        """Refresh the list widget to show the current image file names."""
+        """Refresh the list widget to show the current image file names with controls."""
         self.list_widget.clear()
         for path in self.image_paths:
-            self.list_widget.addItem(os.path.basename(path))
-
-    def remove_selected(self):
-        """Remove selected items from the list."""
-        selected_items = self.list_widget.selectedItems()
-        if not selected_items:
-            return
-        # Remove items starting from the bottom so that indices stay valid.
-        for item in sorted(self.list_widget.selectedItems(),
-                           key=lambda x: self.list_widget.row(x),
-                           reverse=True):
-            index = self.list_widget.row(item)
-            self.image_paths.pop(index)
-        self.update_list_widget()
-        self.list_widget.setCurrentRow(index - 1)
+            item = QListWidgetItem()
+            item_widget = ImageListItem(path, self.list_widget)
+            item.setSizeHint(item_widget.sizeHint())
+            self.list_widget.addItem(item)
+            self.list_widget.setItemWidget(item, item_widget)
 
     def move_up(self):
         """Move the selected image up in the list."""
@@ -124,23 +113,25 @@ class VideoCompiler(QWidget):
             self.status_label.setText("No images selected!")
             return
 
+        print(self.image_paths)
+        return
+
         fps = self.fps_slider.value()
 
-        # Ask user for output file location
         output_path, _ = QFileDialog.getSaveFileName(
             self, "Save Video", "", "MP4 Files (*.mp4);;All Files (*)")
         if not output_path:
             return
 
         try:
-            # Read the first image to determine frame size
+            # Read first image to get frame size
             first_image = cv2.imread(self.image_paths[0])
             if first_image is None:
                 self.status_label.setText("Error reading the first image!")
                 return
             height, width = first_image.shape[:2]
 
-            # Initialize the video writer
+            # init video writer
             fourcc = cv2.VideoWriter_fourcc(*'mp4v')
             out = cv2.VideoWriter(output_path, fourcc, fps, (width, height))
 
@@ -148,12 +139,12 @@ class VideoCompiler(QWidget):
             for i, path in enumerate(self.image_paths):
                 self.status_label.setText(
                     f"Processing image {i+1}/{total_images}...")
-                QApplication.processEvents()  # Keep UI responsive
+                QApplication.processEvents()
                 frame = cv2.imread(path)
                 if frame is None:
                     self.status_label.setText(f"Error reading image: {path}")
                     continue
-                # Resize frame if dimensions differ
+                # Resize frame if needed
                 if frame.shape[:2] != (height, width):
                     frame = cv2.resize(frame, (width, height))
                 out.write(frame)
