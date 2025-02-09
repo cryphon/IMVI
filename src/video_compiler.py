@@ -30,12 +30,15 @@ class VideoCompiler(QWidget):
 
         # Buttons
         btn_layout = QHBoxLayout()
+        self.add_images_btn = QPushButton("Add images")
         self.up_btn = QPushButton("Move Up")
         self.down_btn = QPushButton("Move Down")
+        btn_layout.addWidget(self.add_images_btn)
         btn_layout.addWidget(self.up_btn)
         btn_layout.addWidget(self.down_btn)
         main_layout.addLayout(btn_layout)
 
+        self.add_images_btn.clicked.connect(self.add_images)
         self.up_btn.clicked.connect(self.move_up)
         self.down_btn.clicked.connect(self.move_down)
 
