@@ -2,10 +2,11 @@ import os
 import sys
 
 import cv2
-from list_widget import ListWidget
 from PyQt5.QtCore import QMimeData, QRect, Qt
 from PyQt5.QtWidgets import QApplication, QMainWindow, QTabWidget
-from video_compiler import VideoCompiler
+from interface import Interface
+
+from list_widget import ListWidget
 
 
 class MainWindow(QMainWindow):
@@ -21,13 +22,9 @@ class MainWindow(QMainWindow):
         tab_widget = QTabWidget()
         self.setCentralWidget(tab_widget)
 
-        # Conversion tab with our VideoCompilerWidget
-        conversion_tab = VideoCompiler()
+        conversion_tab = Interface()
         tab_widget.addTab(conversion_tab, "Convert Images to Video")
 
-        # Additional tabs (like Editing or Format Converter) can be added later
-
-        # Global stylesheet for a modern look
         self.setStyleSheet("""
             QMainWindow { 
     background-color: #1e1e1e; 

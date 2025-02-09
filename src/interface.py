@@ -12,10 +12,10 @@ from image_list_item import ImageListItem
 from list_widget import ListWidget
 
 
-class VideoCompiler(QWidget):
+class Interface(QWidget):
 
     def __init__(self, parent=None):
-        super(VideoCompiler, self).__init__(parent)
+        super(Interface, self).__init__(parent)
         self.image_paths = []
         self.setAcceptDrops(True)
         self._create_ui()
@@ -115,9 +115,6 @@ class VideoCompiler(QWidget):
         if not self.image_paths:
             self.status_label.setText("No images selected!")
             return
-
-        print(self.image_paths)
-        return
 
         fps = self.fps_slider.value()
 
