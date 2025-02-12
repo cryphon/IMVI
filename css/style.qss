@@ -18,13 +18,10 @@ QPushButton:hover {
 QTabWidget::pane {
   border: 1px solid #333333;
   border-radius: 8px;
-  margin-top: 20px;
 }
 QTabBar::tab {
   background: #2d2d2d;
   padding: 10px;
-  border-top-left-radius: 8px;
-  border-top-right-radius: 8px;
 }
 QTabBar::tab:selected {
   background: #3d3d3d;
