@@ -46,7 +46,6 @@ if __name__ == "__main__":
     if os.path.exists(qss):
         with open(qss, "r") as fh:
             app.setStyleSheet(fh.read())
-
     window = MainWindow()
     window.show()
     sys.exit(app.exec_())

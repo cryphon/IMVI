@@ -25,3 +25,4 @@ class Compiler(QMainWindow):
         video_tab = VideoTab(self)
         gif_tab = GifTab(self)
         tab_widget.addTab(video_tab, "to MP4")
+        tab_widget.addTab(gif_tab, "to GIF")
