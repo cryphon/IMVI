@@ -8,6 +8,7 @@ from PyQt5.QtWidgets import (QApplication, QFileDialog, QHBoxLayout, QLabel,
                              QListWidgetItem, QPushButton, QSlider,
                              QVBoxLayout, QWidget)
 
+from compiler import Compiler
 from image_list_item import ImageListItem
 from list_widget import ListWidget
 
@@ -42,34 +43,10 @@ class Interface(QWidget):
         self.up_btn.clicked.connect(self.move_up)
         self.down_btn.clicked.connect(self.move_down)
 
-        # FPS control
-        fps_layout = QHBoxLayout()
-        fps_label = QLabel("FPS:")
-        self.fps_slider = QSlider(Qt.Horizontal)
-        self.fps_slider.setMinimum(0)
-        self.fps_slider.setMaximum(60)
-        self.fps_slider.setValue(30)
-        self.fps_slider.setTickInterval(5)
-        self.fps_slider.setTickPosition(QSlider.TicksBelow)
-
-        self.fps_value = QLabel("30")
-        self.fps_slider.valueChanged.connect(
-            lambda v: self.fps_value.setText(str(v)))
-
-        fps_layout.addWidget(fps_label)
-        fps_layout.addWidget(self.fps_slider)
-        fps_layout.addWidget(self.fps_value)
-        main_layout.addLayout(fps_layout)
-
         # Compile video button
         self.compile_btn = QPushButton("Compile Video")
         main_layout.addWidget(self.compile_btn)
-        self.compile_btn.clicked.connect(self.compile_video)
-
-        # Status label
-        self.status_label = QLabel("")
-        self.status_label.setAlignment(Qt.AlignCenter)
-        main_layout.addWidget(self.status_label)
+        self.compile_btn.clicked.connect(self.openCompiler)
 
     def add_images(self):
         """Open a file dialog to select multiple images and add them to the list."""
@@ -110,51 +87,6 @@ class Interface(QWidget):
         self.update_list_widget()
         self.list_widget.setCurrentRow(current_row + 1)
 
-    def compile_video(self):
-        """Compile the selected images into a video file using OpenCV."""
-        if not self.image_paths:
-            self.status_label.setText("No images selected!")
-            return
-
-        fps = self.fps_slider.value()
-
-        output_path, _ = QFileDialog.getSaveFileName(
-            self, "Save Video", "", "MP4 Files (*.mp4);;All Files (*)")
-        if not output_path:
-            return
-
-        try:
-            # Read first image to get frame size
-            first_image = cv2.imread(self.image_paths[0])
-            if first_image is None:
-                self.status_label.setText("Error reading the first image!")
-                return
-            height, width = first_image.shape[:2]
-
-            # init video writer
-            fourcc = cv2.VideoWriter_fourcc(*'mp4v')
-            out = cv2.VideoWriter(output_path, fourcc, fps, (width, height))
-
-            total_images = len(self.image_paths)
-            for i, path in enumerate(self.image_paths):
-                self.status_label.setText(
-                    f"Processing image {i+1}/{total_images}...")
-                QApplication.processEvents()
-                frame = cv2.imread(path)
-                if frame is None:
-                    self.status_label.setText(f"Error reading image: {path}")
-                    continue
-                # Resize frame if needed
-                if frame.shape[:2] != (height, width):
-                    frame = cv2.resize(frame, (width, height))
-                out.write(frame)
-
-            out.release()
-            self.status_label.setText(
-                "Video compilation completed successfully!")
-        except Exception as e:
-            self.status_label.setText(f"Error during compilation: {str(e)}")
-
     def dragEnterEvent(self, event):
         """Accept drag events that contain URLs (file paths)."""
         if event.mimeData().hasUrls():
@@ -167,3 +99,8 @@ class Interface(QWidget):
             if file_path.lower().endswith(('.png', '.jpg', '.jpeg', '.bmp')):
                 self.image_paths.append(file_path)
         self.update_list_widget()
+
+    def openCompiler(self):
+        if self.image_paths:
+            self.compiler_window = Compiler(self)
+            self.compiler_window.show()
