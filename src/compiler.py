@@ -5,6 +5,7 @@ from PyQt5.QtWidgets import (QApplication, QFileDialog, QHBoxLayout, QLabel,
                              QVBoxLayout, QWidget)
 
 from gif_tab import GifTab
+from header import CustomHeader
 from video_tab import VideoTab
 
 
@@ -12,17 +13,27 @@ class Compiler(QMainWindow):
 
     def __init__(self, parent=None):
         super(Compiler, self).__init__()
-        self.setWindowTitle("Compiler")
         self.image_paths = parent.image_paths
         self.setMinimumSize(300, 300)
-        self.create_ui()
+        self.setWindowFlag(Qt.FramelessWindowHint)
 
-    def create_ui(self):
-        """Create UI for compiler window"""
-        tab_widget = QTabWidget()
-        self.setCentralWidget(tab_widget)
+        # Create a container widget to hold both header and content
+        self.container = QWidget()
+        self.setCentralWidget(self.container)
+
+        # Create a vertical layout for the container
+        self.layout = QVBoxLayout(self.container)
+        self.layout.setContentsMargins(0, 0, 0, 0)
+        self.layout.setSpacing(0)
+
+        self.header = CustomHeader(self, title="Compiler")
+        self.layout.addWidget(self.header)
+
+        # Create and add the tab widget
+        self.tab_widget = QTabWidget()
+        self.layout.addWidget(self.tab_widget)
 
         video_tab = VideoTab(self)
         gif_tab = GifTab(self)
-        tab_widget.addTab(video_tab, "to MP4")
-        tab_widget.addTab(gif_tab, "to GIF")
+        self.tab_widget.addTab(video_tab, "to MP4")
+        self.tab_widget.addTab(gif_tab, "to GIF")

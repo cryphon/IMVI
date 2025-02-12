@@ -23,16 +23,14 @@ class GifTab(QWidget):
 
         # FPS control
         fps_layout = QHBoxLayout()
-        fps_label = QLabel("FPS:")
+        fps_label = QLabel("SLOW")
         self.fps_slider = QSlider(Qt.Horizontal)
-        self.fps_slider.setMinimum(0)
-        self.fps_slider.setMaximum(60)
+        self.fps_slider.setMinimum(1)
+        self.fps_slider.setMaximum(61)
         self.fps_slider.setValue(30)
         self.fps_slider.setTickInterval(5)
         self.fps_slider.setTickPosition(QSlider.TicksBelow)
-        self.fps_value = QLabel("30")
-        self.fps_slider.valueChanged.connect(
-            lambda v: self.fps_value.setText(str(v)))
+        self.fps_value = QLabel("FAST")
         fps_layout.addWidget(fps_label)
         fps_layout.addWidget(self.fps_slider)
         fps_layout.addWidget(self.fps_value)
@@ -66,10 +64,12 @@ class GifTab(QWidget):
             self.status_label.setText("No images found in selected paths!")
             return
 
-        fps = self.fps_slider.value()
+        fps = abs(self.fps_slider.value() - 60)
 
+        n_imgs = len(self.parent.image_paths)
+        duration = self.calculate_duration(n_imgs, fps=fps)
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        default_name = f"compiled_gif_{timestamp}.gif"
+        default_name = f"compiled_gif_{fps}FPS_{timestamp}.gif"
 
         # Get save location from first image dir
         output_path, _ = QFileDialog.getSaveFileName(
@@ -79,9 +79,6 @@ class GifTab(QWidget):
 
         if not output_path:  # User cancelled
             return
-
-        n_imgs = len(self.parent.image_paths)
-        duration = self.calculate_duration(n_imgs, fps=fps)
 
         # Save the GIF
         images[0].save(output_path,
@@ -104,8 +101,5 @@ class GifTab(QWidget):
         hours = int(duration_seconds // 3600)
         minutes = int((duration_seconds % 3600) // 60)
         seconds = int(duration_seconds % 60)
-
-        # Format duration string
-        duration_formatted = f"{hours:02d}:{minutes:02d}:{seconds:02d}"
 
         return duration_seconds

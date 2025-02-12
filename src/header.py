@@ -4,7 +4,7 @@ from PyQt5.QtWidgets import QHBoxLayout, QLabel, QPushButton, QWidget
 
 class CustomHeader(QWidget):
 
-    def __init__(self, parent):
+    def __init__(self, parent, title="IMVI"):
         super().__init__(parent)
         self.parent = parent
         self.setFixedHeight(40)
@@ -20,7 +20,7 @@ class CustomHeader(QWidget):
         layout.setSpacing(10)
 
         # Title Label
-        self.title = QLabel("IMVI", self)
+        self.title = QLabel(title, self)
         self.title.setStyleSheet("font-size: 14px;")
 
         # Close Button
