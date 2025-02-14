@@ -1,5 +1,6 @@
 import os
 import sys
+from tkinter import Tcl
 
 import cv2
 from PyQt5.QtCore import QMimeData, QRect, Qt
@@ -93,11 +94,23 @@ class Interface(QWidget):
             event.acceptProposedAction()
 
     def dropEvent(self, event):
-        """Handle drop events by adding the dropped files to the list."""
+        """Handle drop events by adding the dropped files to the list in sorted order."""
+        new_files = []
+
         for url in event.mimeData().urls():
             file_path = url.toLocalFile()
             if file_path.lower().endswith(('.png', '.jpg', '.jpeg', '.bmp')):
-                self.image_paths.append(file_path)
+                new_files.append(file_path)
+
+        # Sort new files before adding them
+        new_files.sort(key=lambda x: os.path.basename(x))
+
+        # Ensure first batch is always in correct order
+        if not self.image_paths:
+            self.image_paths = new_files
+        else:
+            self.image_paths.extend(new_files)
+
         self.update_list_widget()
 
     def openCompiler(self):

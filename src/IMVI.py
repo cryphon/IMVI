@@ -3,12 +3,15 @@ import sys
 
 import cv2
 from PyQt5.QtCore import QMimeData, QRect, Qt
+from PyQt5.QtGui import QFont
 from PyQt5.QtWidgets import (QApplication, QMainWindow, QTabWidget,
                              QVBoxLayout, QWidget)
 
 from header import CustomHeader
 from interface import Interface
 from list_widget import ListWidget
+
+os.environ["QT_LOGGING_RULES"] = "qt.qpa.fonts.warning=false"
 
 
 def resource_path(relative_path):
@@ -47,6 +50,8 @@ if __name__ == "__main__":
     app = QApplication(sys.argv)
     with open(resource_path("css/style.qss"), 'r') as f:
         app.setStyleSheet(f.read())
+    my_font = QFont("Segoe UI", 10)
+    app.setFont(my_font)
     window = MainWindow()
     window.show()
     sys.exit(app.exec_())
