@@ -11,6 +11,14 @@ from interface import Interface
 from list_widget import ListWidget
 
 
+def resource_path(relative_path):
+    try:
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = os.path.abspath(".")
+    return os.path.join(base_path, relative_path)
+
+
 class MainWindow(QMainWindow):
 
     def __init__(self):
@@ -37,10 +45,8 @@ class MainWindow(QMainWindow):
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-    qss = "css/style.qss"
-    if os.path.exists(qss):
-        with open(qss, "r") as fh:
-            app.setStyleSheet(fh.read())
+    with open(resource_path("css/style.qss"), 'r') as f:
+        app.setStyleSheet(f.read())
     window = MainWindow()
     window.show()
     sys.exit(app.exec_())
