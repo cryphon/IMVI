@@ -1,14 +1,15 @@
 from PyQt5.QtCore import QPoint, Qt
-from PyQt5.QtWidgets import QHBoxLayout, QLabel, QPushButton, QWidget
+from PyQt5.QtWidgets import QFrame, QHBoxLayout, QLabel, QPushButton, QWidget
 
 
-class CustomHeader(QWidget):
+class CustomHeader(QFrame):
 
     def __init__(self, parent, title="IMVI"):
         super().__init__(parent)
         self.parent = parent
         self.setFixedHeight(40)
-        self.setStyleSheet("color: white;")
+        self.setObjectName("Header")
+        self.setAutoFillBackground(True)
 
         # Ensure it stretches across the full width of the parent window
         self.setGeometry(0, 0, parent.width(), 40)
@@ -21,7 +22,8 @@ class CustomHeader(QWidget):
 
         # Title Label
         self.title = QLabel(title, self)
-        self.title.setStyleSheet("font-size: 14px;")
+        self.title.setObjectName(
+            "HeaderTitle")  # Object name for QSS targeting
 
         # Close Button
         self.close_button = QPushButton("✖", self)
