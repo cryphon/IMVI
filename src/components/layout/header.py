@@ -1,8 +1,8 @@
-from PyQt5.QtCore import QPoint, Qt
-from PyQt5.QtWidgets import QFrame, QHBoxLayout, QLabel, QPushButton, QWidget
+from PyQt5.QtCore import  Qt, QPoint
+from PyQt5.QtWidgets import QFrame, QHBoxLayout, QWidget
+from components.core import Button, Label 
 
-
-class CustomHeader(QFrame):
+class Header(QFrame):
 
     def __init__(self, parent, title="IMVI"):
         super().__init__(parent)
@@ -21,17 +21,15 @@ class CustomHeader(QFrame):
         layout.setSpacing(10)
 
         # Title Label
-        self.title = QLabel(title, self)
-        self.title.setObjectName(
-            "HeaderTitle")  # Object name for QSS targeting
+        self.title = Label(title, style="SubTitleLabel")
 
         # Close Button
-        self.close_button = QPushButton("✖", self)
+        self.close_button = Button("✖", action=self.parent.close)
         self.close_button.setFixedSize(30, 30)
         self.close_button.setStyleSheet(
-            "background: transparent; color: white; border: none; font-size: 16px;"
+            "background: transparent; color: white; border: none;"
         )
-        self.close_button.clicked.connect(self.parent.close)
+    
 
         # Add widgets to layout
         layout.addWidget(self.title)

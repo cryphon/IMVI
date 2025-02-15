@@ -3,13 +3,12 @@ import sys
 
 import cv2
 from PyQt5.QtCore import QMimeData, QRect, Qt
-from PyQt5.QtGui import QFont
 from PyQt5.QtWidgets import (QApplication, QMainWindow, QTabWidget,
                              QVBoxLayout, QWidget)
 
-from header import CustomHeader
-from interface import Interface
-from list_widget import ListWidget
+from components.frames import Interface
+from components.layout import Header
+from components.utils import load_fonts
 
 os.environ["QT_LOGGING_RULES"] = "qt.qpa.fonts.warning=false"
 
@@ -36,7 +35,7 @@ class MainWindow(QMainWindow):
         self.layout.setContentsMargins(0, 0, 0, 0)
         self.layout.setSpacing(0)
 
-        self.header = CustomHeader(self)
+        self.header = Header(self)
         self.layout.addWidget(self.header)
 
         self.tab_widget = QTabWidget()
@@ -50,8 +49,7 @@ if __name__ == "__main__":
     app = QApplication(sys.argv)
     with open(resource_path("css/style.qss"), 'r') as f:
         app.setStyleSheet(f.read())
-    my_font = QFont("Segoe UI", 10)
-    app.setFont(my_font)
+    load_fonts("fonts/")
     window = MainWindow()
     window.show()
     sys.exit(app.exec_())

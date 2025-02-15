@@ -4,14 +4,13 @@ from tkinter import Tcl
 
 import cv2
 from PyQt5.QtCore import QMimeData, QRect, Qt
-from PyQt5.QtGui import QColor, QFontMetrics, QPainter, QPalette
-from PyQt5.QtWidgets import (QApplication, QFileDialog, QHBoxLayout, QLabel,
-                             QListWidgetItem, QPushButton, QSlider,
-                             QVBoxLayout, QWidget)
+from PyQt5.QtWidgets import (QApplication, QFileDialog, QHBoxLayout,
+                             QListWidgetItem, QVBoxLayout, QWidget)
 
-from compiler import Compiler
-from image_list_item import ImageListItem
-from list_widget import ListWidget
+from components.core import Button, ImageListItem
+from components.layout import ListWidget
+
+from .compiler import Compiler
 
 
 class Interface(QWidget):
@@ -32,22 +31,24 @@ class Interface(QWidget):
 
         # Buttons
         btn_layout = QHBoxLayout()
-        self.add_images_btn = QPushButton("Add images")
-        self.up_btn = QPushButton("Move Up")
-        self.down_btn = QPushButton("Move Down")
+        self.add_images_btn = Button("Add images",
+                                     style="InfoButton",
+                                     action=self.add_images)
+        self.up_btn = Button("Move Up",
+                             style="InfoButton",
+                             action=self.move_up)
+        self.down_btn = Button("Move Down",
+                               style="InfoButton",
+                               action=self.move_down)
+        self.compile_btn = Button("Compile Video",
+                                  style="ActionButton",
+                                  action=self.openCompiler)
         btn_layout.addWidget(self.add_images_btn)
         btn_layout.addWidget(self.up_btn)
         btn_layout.addWidget(self.down_btn)
         main_layout.addLayout(btn_layout)
 
-        self.add_images_btn.clicked.connect(self.add_images)
-        self.up_btn.clicked.connect(self.move_up)
-        self.down_btn.clicked.connect(self.move_down)
-
-        # Compile video button
-        self.compile_btn = QPushButton("Compile Video")
         main_layout.addWidget(self.compile_btn)
-        self.compile_btn.clicked.connect(self.openCompiler)
 
     def add_images(self):
         """Open a file dialog to select multiple images and add them to the list."""

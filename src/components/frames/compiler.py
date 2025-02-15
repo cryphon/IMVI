@@ -4,9 +4,8 @@ from PyQt5.QtWidgets import (QApplication, QFileDialog, QHBoxLayout, QLabel,
                              QMainWindow, QPushButton, QSlider, QTabWidget,
                              QVBoxLayout, QWidget)
 
-from gif_tab import GifTab
-from header import CustomHeader
-from video_tab import VideoTab
+from components.layout import Header
+from components.tabs import GifTab, VideoTab
 
 
 class Compiler(QMainWindow):
@@ -26,7 +25,7 @@ class Compiler(QMainWindow):
         self.layout.setContentsMargins(0, 0, 0, 0)
         self.layout.setSpacing(0)
 
-        self.header = CustomHeader(self, title="Compiler")
+        self.header = Header(self, title="Compiler")
         self.layout.addWidget(self.header)
 
         # Create and add the tab widget
