@@ -100,7 +100,15 @@ class Interface(QWidget):
 
         for url in event.mimeData().urls():
             file_path = url.toLocalFile()
-            if file_path.lower().endswith(('.png', '.jpg', '.jpeg', '.bmp')):
+
+            if os.path.isdir(
+                    file_path):
+                for root, _, files in os.walk(file_path):
+                    for file in files:
+                        if file.lower().endswith(
+                            ('.png', '.jpg', '.jpeg', '.bmp')):
+                            new_files.append(os.path.join(root, file))
+            elif file_path.lower().endswith(('.png', '.jpg', '.jpeg', '.bmp')):
                 new_files.append(file_path)
 
         # Sort new files before adding them
