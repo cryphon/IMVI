@@ -8,7 +8,7 @@ from PyQt5.QtWidgets import (QApplication, QFileDialog, QHBoxLayout,
                              QListWidgetItem, QVBoxLayout, QWidget)
 
 from components.core import Button, ImageListItem
-from components.layout import ListWidget
+from components.layout import ListWidget, ThumbnailViewer
 
 from .compiler import Compiler
 
@@ -26,7 +26,7 @@ class Interface(QWidget):
         main_layout = QVBoxLayout(self)
 
         # List widget
-        self.list_widget = ListWidget(self)
+        self.list_widget = ThumbnailViewer(self)
         main_layout.addWidget(self.list_widget)
 
         # Buttons
@@ -61,7 +61,9 @@ class Interface(QWidget):
 
     def update_list_widget(self):
         """Refresh the list widget to show the current image file names with controls."""
-        self.list_widget.clear()
+        for child in self.list_widget.findChildren(QWidget):
+            child.deleteLater()  # Delete each widget properly
+
         for path in self.image_paths:
             item = QListWidgetItem()
             item_widget = ImageListItem(path, self.list_widget)
@@ -101,8 +103,7 @@ class Interface(QWidget):
         for url in event.mimeData().urls():
             file_path = url.toLocalFile()
 
-            if os.path.isdir(
-                    file_path):
+            if os.path.isdir(file_path):
                 for root, _, files in os.walk(file_path):
                     for file in files:
                         if file.lower().endswith(

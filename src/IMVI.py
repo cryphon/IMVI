@@ -25,7 +25,7 @@ class MainWindow(QMainWindow):
 
     def __init__(self):
         super(MainWindow, self).__init__()
-        self.setMinimumSize(400, 600)
+        self.setMinimumSize(800, 400)
         self.setWindowFlag(Qt.FramelessWindowHint)
 
         self.container = QWidget()
