@@ -13,7 +13,6 @@ class VideoTab(QWidget):
         self.create_ui()
 
     def create_ui(self):
-        """Create UI for video tab"""
         main_layout = QVBoxLayout(self)
 
         # FPS control
@@ -48,7 +47,6 @@ class VideoTab(QWidget):
         main_layout.addWidget(self.status_label)
 
     def compile_video(self):
-        """Compile the selected images into a video file using OpenCV."""
         if not self.image_paths:
             self.status_label.setText("No images selected!")
             return
