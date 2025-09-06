@@ -4,13 +4,16 @@ from datetime import datetime
 
 import cv2
 from PIL import Image
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import (Qt, pyqtSignal)
 from PyQt5.QtWidgets import (QApplication, QFileDialog, QHBoxLayout, QLabel,
                              QMainWindow, QPushButton, QSlider, QVBoxLayout,
                              QWidget)
 
 
 class GifTab(QWidget):
+
+    # define signal
+    compileGIFSuccessful = pyqtSignal()
 
     def __init__(self, parent=None):
         super(GifTab, self).__init__()
@@ -91,6 +94,8 @@ class GifTab(QWidget):
         self.status_label.setText(
             f"GIF compilation completed successfully!\nSaved as: {output_path}"
         )
+
+        self.compileGIFSuccessful.emit()
 
     def calculate_duration(self, num_images, fps=30):
 

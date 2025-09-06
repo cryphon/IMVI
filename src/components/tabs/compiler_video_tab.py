@@ -1,11 +1,14 @@
 import cv2
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import (Qt, pyqtSignal)
 from PyQt5.QtWidgets import (QApplication, QFileDialog, QHBoxLayout, QLabel,
                              QMainWindow, QPushButton, QSlider, QVBoxLayout,
                              QWidget)
 
 
 class VideoTab(QWidget):
+
+    # define signal
+    compileVideoSuccessful = pyqtSignal()
 
     def __init__(self, parent=None):
         super(VideoTab, self).__init__()
@@ -87,7 +90,10 @@ class VideoTab(QWidget):
                 out.write(frame)
 
             out.release()
-            self.status_label.setText(
-                "Video compilation completed successfully!")
+            self.status_label.setText("Video compilation completed successfully!")
+
+            self.compileVideoSuccessful.emit()
+
         except Exception as e:
             self.status_label.setText(f"Error during compilation: {str(e)}")
+            print(f"Error during compilation: {str(e)}")

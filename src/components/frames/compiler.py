@@ -1,14 +1,17 @@
 import cv2
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import (Qt, pyqtSignal)
 from PyQt5.QtWidgets import (QApplication, QFileDialog, QHBoxLayout, QLabel,
                              QMainWindow, QPushButton, QSlider, QTabWidget,
-                             QVBoxLayout, QWidget)
+                             QVBoxLayout, QWidget, QMessageBox)
 
 from components.layout import Header
 from components.tabs import GifTab, VideoTab
 
 
 class Compiler(QMainWindow):
+
+    # Signal that this window is completely done (used by the interface)
+    compilationFinished = pyqtSignal()
 
     def __init__(self, parent=None):
         super(Compiler, self).__init__()
@@ -36,3 +39,12 @@ class Compiler(QMainWindow):
         gif_tab = GifTab(self)
         self.tab_widget.addTab(video_tab, "to MP4")
         self.tab_widget.addTab(gif_tab, "to GIF")
+
+        video_tab.compileVideoSuccessful.connect(self.handle_compiled)
+        gif_tab.compileGIFSuccessful.connect(self.handle_compiled)
+
+    def handle_compiled(self):
+        self.compilationFinished.emit()
+        self.close()
+        QMessageBox.information(self, "Compilation", "compiled successfully!")
+

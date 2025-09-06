@@ -66,6 +66,10 @@ class VideoInterface(QWidget):
             self.list_widget.addItem(item)
             self.list_widget.setItemWidget(item, item_widget)
 
+    def clear_image_list(self):
+        self.image_paths = []
+        self.update_list_widget()
+
     def move_up(self):
         """Move the selected image up in the list."""
         current_row = self.list_widget.currentRow()
@@ -121,4 +125,5 @@ class VideoInterface(QWidget):
     def openCompiler(self):
         if self.image_paths:
             self.compiler_window = Compiler(self)
+            self.compiler_window.compilationFinished.connect(self.clear_image_list)
             self.compiler_window.show()
