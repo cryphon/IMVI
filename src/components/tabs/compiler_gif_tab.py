@@ -5,8 +5,8 @@ from datetime import datetime
 import cv2
 from PIL import Image
 from PyQt5.QtCore import (Qt, pyqtSignal)
-from PyQt5.QtWidgets import (QApplication, QFileDialog, QHBoxLayout, QLabel,
-                             QMainWindow, QPushButton, QSlider, QVBoxLayout,
+from PyQt5.QtWidgets import (QComboBox, QFileDialog, QHBoxLayout, QLabel,
+                             QMessageBox, QPushButton, QSlider, QVBoxLayout,
                              QWidget)
 
 
@@ -19,6 +19,13 @@ class GifTab(QWidget):
         super(GifTab, self).__init__()
         self.parent = parent
         self.create_ui()
+
+    def show_message(self, title, text, icon=QMessageBox.Information):
+        msg = QMessageBox(self)
+        msg.setIcon(icon)
+        msg.setWindowTitle(title)
+        msg.setText(text)
+        msg.exec_()
 
     def create_ui(self):
         """Create UI for GIF tab"""
@@ -39,32 +46,56 @@ class GifTab(QWidget):
         fps_layout.addWidget(self.fps_value)
         main_layout.addLayout(fps_layout)
 
+        loop_layout = QHBoxLayout()
+        loop_label = QLabel("Playback:")
+        self.loop_combo = QComboBox()
+        self.loop_combo.addItems(["Play once", "Loop forever"])
+        self.loop_combo.setStyleSheet("""
+            QComboBox {
+                color: white;
+                background-color: #2b2b2b;
+                selection-background-color: #3a3a3a;
+                selection-color: white;
+            }
+            QComboBox QAbstractItemView {
+                color: white;
+                background-color: #2b2b2b;
+                selection-background-color: #3a3a3a;
+                selection-color: white;
+            }
+        """)
+        loop_layout.addWidget(loop_label)
+        loop_layout.addWidget(self.loop_combo)
+        loop_layout.addStretch()
+        main_layout.addLayout(loop_layout)
+
         btn_layout = QHBoxLayout()
         self.compile_btn = QPushButton("Compile GIF")
         btn_layout.addWidget(self.compile_btn)
         main_layout.addLayout(btn_layout)
         self.compile_btn.clicked.connect(self.compile_gif)
 
-        # Status label
-        self.status_label = QLabel("Click Compile GIF to start")
-        self.status_label.setAlignment(Qt.AlignCenter)
-        main_layout.addWidget(self.status_label)
-
     def compile_gif(self):
         """Handle GIF compilation using parent's image paths"""
         if not self.parent or not self.parent.image_paths:
-            self.status_label.setText("No images selected!")
+            self.show_message("Error", "No images selected!",
+                              QMessageBox.Warning)
             return
 
         images = []
 
         for filename in self.parent.image_paths:
-            im = Image.open(filename)
-            h, w = im.size
-            images.append(im)
+            try:
+                im = Image.open(filename)
+                images.append(im)
+            except Exception as e:
+                self.show_message("Error", f"Failed to open {filename}\n{e}",
+                                  QMessageBox.Critical)
+                return
 
         if not images:
-            self.status_label.setText("No images found in selected paths!")
+            self.show_message("Error", "No valid images found!",
+                              QMessageBox.Warning)
             return
 
         fps = abs(self.fps_slider.value() - 60)
@@ -84,27 +115,24 @@ class GifTab(QWidget):
             return
 
         # Save the GIF
-        images[0].save(output_path,
-                       save_all=True,
-                       append_images=images[1:],
-                       optimize=False,
-                       duration=duration,
-                       loop=0)
+        loop_forever = (self.loop_combo.currentText() == "Loop forever")
+        save_kwargs = dict(save_all=True,
+                           append_images=images[1:],
+                           optimize=False,
+                           duration=duration)
+        if loop_forever:
+            save_kwargs["loop"] = 0  # 0 = infinite
 
-        self.status_label.setText(
-            f"GIF compilation completed successfully!\nSaved as: {output_path}"
-        )
+        try:
+            images[0].save(output_path, **save_kwargs)
+            self.show_message("Success",
+                              f"GIF saved successfully:\n{output_path}",
+                              QMessageBox.Information)
+        except Exception as e:
+            self.show_message("Error", f"Failed to save GIF:\n{e}",
+                              QMessageBox.Critical)
 
         self.compileGIFSuccessful.emit()
 
     def calculate_duration(self, num_images, fps=30):
-
-        # Calculate duration in seconds
-        duration_seconds = num_images / fps
-
-        # Convert to hours, minutes, seconds
-        hours = int(duration_seconds // 3600)
-        minutes = int((duration_seconds % 3600) // 60)
-        seconds = int(duration_seconds % 60)
-
-        return duration_seconds
+        return max(1, int(1000 / max(1, fps)))
