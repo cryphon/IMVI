@@ -12,7 +12,7 @@ class ThumbnailItem(QWidget):
         super().__init__(parent)
 
         # Image thumbnail
-        pixmap = QPixmap(path).scaled(80, 80, Qt.KeepAspectRatio,
+        pixmap = QPixmap(path).scaled(100, 100, Qt.KeepAspectRatio,
                                       Qt.SmoothTransformation)
         image_label = QLabel()
         image_label.setPixmap(pixmap)
