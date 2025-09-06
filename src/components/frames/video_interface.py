@@ -68,7 +68,8 @@ class VideoInterface(QWidget):
 
     def clear_image_list(self):
         self.image_paths = []
-        self.update_list_widget()
+        
+        # self.update_list_widget()
 
     def move_up(self):
         """Move the selected image up in the list."""
