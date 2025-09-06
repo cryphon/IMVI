@@ -68,7 +68,7 @@ class VideoTab(QWidget):
         self.quality_slider.setTickInterval(1)
         self.quality_slider.setTickPosition(QSlider.TicksBelow)
 
-        self.quality_value = QLabel("30")
+        self.quality_value = QLabel("50")
         self.quality_slider.valueChanged.connect(
             lambda v: self.quality_value.setText(str(v)))
 
