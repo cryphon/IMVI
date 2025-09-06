@@ -5,9 +5,8 @@ from datetime import datetime
 import cv2
 from PIL import Image
 from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import (QApplication, QFileDialog, QHBoxLayout, QLabel,
-                             QMainWindow, QPushButton, QSlider, QVBoxLayout,
-                             QWidget)
+from PyQt5.QtWidgets import (QComboBox, QFileDialog, QHBoxLayout, QLabel,
+                             QPushButton, QSlider, QVBoxLayout, QWidget)
 
 
 class GifTab(QWidget):
@@ -35,6 +34,16 @@ class GifTab(QWidget):
         fps_layout.addWidget(self.fps_slider)
         fps_layout.addWidget(self.fps_value)
         main_layout.addLayout(fps_layout)
+
+        # NEW: loop mode selector
+        loop_layout = QHBoxLayout()
+        loop_label = QLabel("Playback:")
+        self.loop_combo = QComboBox()
+        self.loop_combo.addItems(["Play once", "Loop forever"])
+        loop_layout.addWidget(loop_label)
+        loop_layout.addWidget(self.loop_combo)
+        loop_layout.addStretch()
+        main_layout.addLayout(loop_layout)
 
         btn_layout = QHBoxLayout()
         self.compile_btn = QPushButton("Compile GIF")
@@ -81,25 +90,18 @@ class GifTab(QWidget):
             return
 
         # Save the GIF
-        images[0].save(output_path,
-                       save_all=True,
-                       append_images=images[1:],
-                       optimize=False,
-                       duration=duration,
-                       loop=0)
+        loop_forever = (self.loop_combo.currentText() == "Loop forever")
+        save_kwargs = dict(save_all=True,
+                           append_images=images[1:],
+                           optimize=False,
+                           duration=duration)
+        if loop_forever:
+            save_kwargs["loop"] = 0  # 0 = infinite
 
+        images[0].save(output_path, **save_kwargs)
         self.status_label.setText(
             f"GIF compilation completed successfully!\nSaved as: {output_path}"
         )
 
     def calculate_duration(self, num_images, fps=30):
-
-        # Calculate duration in seconds
-        duration_seconds = num_images / fps
-
-        # Convert to hours, minutes, seconds
-        hours = int(duration_seconds // 3600)
-        minutes = int((duration_seconds % 3600) // 60)
-        seconds = int(duration_seconds % 60)
-
-        return duration_seconds
+        return max(1, int(1000 / max(1, fps)))
