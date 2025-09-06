@@ -6,7 +6,7 @@ from PyQt5.QtCore import QMimeData, QRect, Qt
 from PyQt5.QtWidgets import (QApplication, QMainWindow, QTabWidget,
                              QVBoxLayout, QWidget)
 
-from components.frames import Interface
+from components.frames import VideoInterface, ImageInterface 
 from components.layout import Header
 from components.utils import load_fonts
 
@@ -41,8 +41,10 @@ class MainWindow(QMainWindow):
         self.tab_widget = QTabWidget()
         self.layout.addWidget(self.tab_widget)
 
-        conversion_tab = Interface()
-        self.tab_widget.addTab(conversion_tab, "Convert Images to Video")
+        video_interface_tab = VideoInterface()
+        image_interface_tab = ImageInterface()
+        self.tab_widget.addTab(video_interface_tab, "Convert Images to Video")
+        self.tab_widget.addTab(image_interface_tab, "Convert Image Types")
 
 
 if __name__ == "__main__":

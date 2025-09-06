@@ -1,1 +1,2 @@
-from .interface import Interface
+from .video_interface import VideoInterface
+from .image_interface import ImageInterface

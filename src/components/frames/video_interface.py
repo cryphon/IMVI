@@ -1,22 +1,17 @@
 import os
-import sys
-from tkinter import Tcl
-
-import cv2
-from PyQt5.QtCore import QMimeData, QRect, Qt
 from PyQt5.QtWidgets import (QApplication, QFileDialog, QHBoxLayout,
                              QListWidgetItem, QVBoxLayout, QWidget)
 
-from components.core import Button, ImageListItem
-from components.layout import ListWidget, ThumbnailViewer
+from ..core import Button, ImageListItem
+from ..layout import ListWidget, ThumbnailViewer
 
 from .compiler import Compiler
 
 
-class Interface(QWidget):
+class VideoInterface(QWidget):
 
     def __init__(self, parent=None):
-        super(Interface, self).__init__(parent)
+        super(VideoInterface, self).__init__(parent)
         self.image_paths = []
         self.setAcceptDrops(True)
         self._create_ui()
