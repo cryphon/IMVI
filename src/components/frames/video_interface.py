@@ -1,10 +1,10 @@
 import os
+
 from PyQt5.QtWidgets import (QApplication, QFileDialog, QHBoxLayout,
                              QListWidgetItem, QVBoxLayout, QWidget)
 
 from ..core import Button, ImageListItem
 from ..layout import ListWidget, ThumbnailViewer
-
 from .compiler import Compiler
 
 
@@ -56,15 +56,7 @@ class VideoInterface(QWidget):
 
     def update_list_widget(self):
         """Refresh the list widget to show the current image file names with controls."""
-        for child in self.list_widget.findChildren(QWidget):
-            child.deleteLater()  # Delete each widget properly
-
-        for path in self.image_paths:
-            item = QListWidgetItem()
-            item_widget = ImageListItem(path, self.list_widget)
-            item.setSizeHint(item_widget.sizeHint())
-            self.list_widget.addItem(item)
-            self.list_widget.setItemWidget(item, item_widget)
+        self.list_widget.update_grid()
 
     def clear_image_list(self):
         self.image_paths = []
@@ -125,5 +117,6 @@ class VideoInterface(QWidget):
     def openCompiler(self):
         if self.image_paths:
             self.compiler_window = Compiler(self)
-            self.compiler_window.compilationFinished.connect(self.clear_image_list)
+            self.compiler_window.compilationFinished.connect(
+                self.clear_image_list)
             self.compiler_window.show()

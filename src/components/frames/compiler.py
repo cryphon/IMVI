@@ -43,8 +43,16 @@ class Compiler(QMainWindow):
         video_tab.compileVideoSuccessful.connect(self.handle_compiled)
         gif_tab.compileGIFSuccessful.connect(self.handle_compiled)
 
+
+        # compiler.py
     def handle_compiled(self):
+
+        if self.parent() and hasattr(self.parent(), "image_paths"):
+            self.parent().image_paths.clear()
+
+        # 2) tell listeners UIs to refresh (your main window can hook this)
         self.compilationFinished.emit()
+
+        # 3) close and notify
         self.close()
         QMessageBox.information(self, "Compilation", "compiled successfully!")
-
