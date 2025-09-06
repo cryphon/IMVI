@@ -27,6 +27,7 @@ class ThumbnailViewer(QWidget):
         # Container for grid
         self.container = QWidget()
         self.grid_layout = QGridLayout(self.container)
+        self.container.setLayout(self.grid_layout)
         self.grid_layout.setSpacing(5)  # Space between thumbnails
         self.scroll_area.setWidget(self.container)
 
@@ -51,22 +52,14 @@ class ThumbnailViewer(QWidget):
             self.update_grid()
 
     def update_grid(self):
-        """Updates the grid layout with new thumbnails."""
-        # Remove existing items
+        # remove old thumbs
         for i in reversed(range(self.grid_layout.count())):
-            item = self.grid_layout.itemAt(i)
-            if item:
-                widget = item.widget()
-                if widget:
-                    widget.deleteLater()
+            w = self.grid_layout.itemAt(i).widget()
+            if w:
+                w.deleteLater()
 
-        # Add new items
-        cols = 3  # Number of columns
-        for index, path in enumerate(self.parent.image_paths):
-            row, col = divmod(index, cols)
-
-            thumb_widget = ThumbnailItem(path)
-            # Add widget to grid
-            self.grid_layout.addWidget(thumb_widget, row, col)
-
-        self.container.setLayout(self.grid_layout)
+        # add new thumbs
+        cols = 3
+        for idx, path in enumerate(self.parent.image_paths):
+            row, col = divmod(idx, cols)
+            self.grid_layout.addWidget(ThumbnailItem(path), row, col)
